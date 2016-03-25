@@ -34,7 +34,7 @@ const int INF = 1 << 25;
 const int NMAX = 1005;
 int c[NMAX][NMAX];          // capacity matrix
 int f[NMAX][NMAX];          // flow matrix
-int prev[NMAX];
+int parent[NMAX];
 
 
 int ford_fulkerson(int n, int s, int t) {
@@ -58,23 +58,23 @@ int ford_fulkerson(int n, int s, int t) {
     // while there is a path from s to t in the residual graph
     while (true) {
         // Use BFS to find s-t path in residual graph
-        for (int i=0; i<n; i++) { prev[i] = -1; }  
-        prev[s] = -2;                             
+        for (int i=0; i<n; i++) { parent[i] = -1; }  
+        parent[s] = -2;                             
         queue<int> q;
         q.push(s);
         
-        while (!q.empty() && prev[t] == -1) {
+        while (!q.empty() && parent[t] == -1) {
             int u = q.front(); q.pop();
             for (int v=0; v<n; v++) {
                 int cf = c[u][v] - f[u][v];
-                if (cf > 0 && prev[v] == -1) {
+                if (cf > 0 && parent[v] == -1) {
                     q.push(v);
-                    prev[v] = u;
+                    parent[v] = u;
                 }
             }
         }
                     
-        if (prev[t] == -1) break;   // if t has not been reached
+        if (parent[t] == -1) break;   // if t has not been reached
             
         // augment s-t path in residual graph that has been found by BFS
         int u, v, delta, cf;
@@ -82,7 +82,7 @@ int ford_fulkerson(int n, int s, int t) {
         v = t;
         delta = INF;
         while (true) {
-            u = prev[v];
+            u = parent[v];
             cf = c[u][v] - f[u][v];
             delta = min(delta, cf);
             v = u;
@@ -91,7 +91,7 @@ int ford_fulkerson(int n, int s, int t) {
                 
         v = t;
         while (true) {
-            u = prev[v];
+            u = parent[v];
             f[u][v] += delta;
             f[v][u] -= delta;
             v = u;
