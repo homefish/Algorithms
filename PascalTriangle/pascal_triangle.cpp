@@ -43,7 +43,7 @@ string get_Nth_row_Pascal_triangle(int N) {
                 L_new.push_back(L[k] + L[k+1]);
             }
             L_new.push_back(1);
-            L = L_new;
+            L = move(L_new);
         }
         res = L;
     }
